@@ -12,13 +12,22 @@ exports.add = async (req, res) => {
 
       const fileName = file.path.split('/').slice(-1)[0]; // cut only filename from full path, e.g. C:/test/abc.jpg -> abc.jpg
       const fileExt = fileName.split('.').slice(-1)[0];
-      if(fileExt == 'gif' || fileExt == 'jpg' || fileExt == 'png') {
-        const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
-        await newPhoto.save(); // ...save new photo in DB
-      res.json(newPhoto);
-      } else {
+
+      if(fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'png') {
         throw new Error('Wrong file!')
       }
+
+      if(title.length > 25) {
+        throw new Error('Title is too long');
+      }
+
+      if(author.length > 50) {
+        throw new Error('Author\'s name is too long');
+      }
+
+      const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
+      await newPhoto.save(); // ...save new photo in DB
+      res.json(newPhoto);
 
     } else {
       throw new Error('Wrong input!');
