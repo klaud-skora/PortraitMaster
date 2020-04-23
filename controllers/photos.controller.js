@@ -12,6 +12,11 @@ exports.add = async (req, res) => {
 
       const fileName = file.path.split('/').slice(-1)[0]; // cut only filename from full path, e.g. C:/test/abc.jpg -> abc.jpg
       const fileExt = fileName.split('.').slice(-1)[0];
+      const pattern = new RegExp(/((\w|\s|\.)*)/, 'g');
+      const authorMatched = author.match(pattern).join('');
+      const titleMatched = title.match(pattern).join('');
+      const emailPattern = new RegExp(/((\w|\.)*)/, 'g');
+      const emailMatched = email.match(emailPattern).join('');
 
       if(fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'png') {
         throw new Error('Wrong file!')
@@ -24,6 +29,15 @@ exports.add = async (req, res) => {
       if(author.length > 50) {
         throw new Error('Author\'s name is too long');
       }
+
+      
+      if(authorMatched.length < author.length || titleMatched.length < title.length) {
+        throw new Error('Invalid characters...');
+      } 
+
+      if(email.indexOf('@') === -1 || emailMatched.length < email.length -1 ) {
+        throw new Error('Invalid characters...');
+      } 
 
       const newPhoto = new Photo({ title, author, email, src: fileName, votes: 0 });
       await newPhoto.save(); // ...save new photo in DB
