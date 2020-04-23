@@ -64,21 +64,3 @@ exports.loadAll = async (req, res) => {
   }
 
 };
-
-/****** VOTE FOR PHOTO ********/
-
-exports.vote = async (req, res) => {
-
-  try {
-    const photoToUpdate = await Photo.findOne({ _id: req.params.id });
-    if(!photoToUpdate) res.status(404).json({ message: 'Not found' });
-    else {
-      photoToUpdate.votes++;
-      photoToUpdate.save();
-      res.send({ message: 'OK' });
-    }
-  } catch(err) {
-    res.status(500).json(err);
-  }
-
-};
